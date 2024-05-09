@@ -1,0 +1,102 @@
+(defn my-reduce [f init coll]
+  (loop [result init                   
+         restt coll]         
+    (if (empty? restt)     
+      result                        
+      (recur (f result (first restt)) (rest restt))))) 
+
+(defn my-filter [pred coll]
+    (let [result []]
+        (if (empty? coll)
+            result
+            (let [head (last coll) tail (butlast coll)]
+                (if (pred head)
+                    (conj (my-filter pred tail) head)
+                    (my-filter pred tail)
+                ))
+            )))
+
+(defn my-concat [coll1 coll2]
+      (if (empty? coll1)
+    coll2
+    (recur (rest coll1) (cons (first coll1) coll2))))
+
+(defn my-nth [coll index]
+    (if (= 0 index)
+        (first coll)
+        (my-nth (rest coll) (dec index))
+        )
+    )
+
+(defn my-count [coll]
+    (if (not= (count coll) 0)
+            (+ 1 (my-count(rest coll)))
+        0
+    )
+)
+(defn my-take [n coll]
+    (if (= n 0)
+        []
+        (cons (first coll) (my-take (dec n) (rest coll)))
+        )   
+    )
+(defn my-count [coll]
+    (println (empty? coll))
+    (if (empty? coll)
+        0
+        (+ 1 (my-count (rest coll) ) )
+        )
+    )
+(defn my-max [coll]
+  (if (empty? coll)
+    nil
+    (if (= (count coll) 1)
+      (first coll)
+      (if (> (first coll) (my-max (rest coll)))
+        (first coll)
+        (my-max (rest coll))))
+    )
+)
+
+(defn my-min [coll]
+  (if (empty? coll)
+    nil
+    (if (= (count coll) 1)
+      (first coll)
+      (if (< (first coll) (my-min (rest coll)))
+        (first coll)
+        (my-min (rest coll))))
+    )
+)
+(defn my-merge [map1 map2]
+  (let [merged-map (atom {})]
+    (doseq [[k v] map1]
+      (swap! merged-map assoc k v))
+    (doseq [[k v] map2]
+      (swap! merged-map assoc k v))
+    @merged-map))
+(defn my-keys [map]
+   (let [keyss (atom [])]
+    (doseq [[k val] map]
+      (swap! keyss conj k))
+    @keyss))
+(defn my-vals [map]
+   (let [vals (atom [])]
+    (doseq [[_ val] map]
+      (swap! vals conj val))
+    @vals))
+(defn my-select-keys [map keys]
+  (let [result (atom {})]
+    (doseq [[k val] map]
+      (if (contains? (set keys) k)
+        (swap! result assoc k val)))
+    @result)
+)
+
+(defn my-group-by [f coll]
+  (reduce
+    (fn [acc x]
+      (let [key (f x)]
+        (assoc acc key (conj (get acc key []) x))))
+    {}
+    coll))
